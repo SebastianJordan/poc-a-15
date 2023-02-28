@@ -1,0 +1,50 @@
+<ng-container
+  *ngrxLet="
+    { episode: episode$, characters: characters$ } as vm;
+    error as e;
+    suspenseTpl: loading
+  "
+>
+  <div class="w-full p-4 h-modal md:h-full">
+    <div class="w-full h-full max-w-2xl md:h-auto">
+      <div class="bg-white rounded-lg shadow dark:bg-gray-700">
+        <div
+          class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600"
+        >
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            {{ vm.episode.name }}
+          </h3>
+        </div>
+        <div class="p-6 space-y-6">
+          <table
+            class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          >
+            <thead
+              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              <tr>
+                <th>Avatar</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let c of vm.characters"
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              >
+                <td>
+                  <img ngSrc="{{c.image}}" width="40" height="40" priority />
+                </td>
+                <td class="text-blue-300">{{ c.name }}</td>
+              </tr>
+              <tr></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-template #loading>
+  <p>Loading...</p>
+</ng-template>
