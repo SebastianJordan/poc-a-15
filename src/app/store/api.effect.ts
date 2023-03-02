@@ -1,25 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiService } from '../service/api-service.service';
-import {
-  getEpisode,
-  getEpisodes,
-  setEpisode,
-  setCharacters,
-  setEpisodes,
-  getCharacters
-} from './api.actions';
+import { EpisodeActions, CharacterActions } from './api.actions';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, catchError, map, mergeMap } from 'rxjs';
 import { Character } from '../interfaces';
 
 @Injectable()
 export class ApiEffects {
+  private actions$ = inject(Actions);
+  private apiService = inject(ApiService);
+
   readonly loadEpisode$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(getEpisodes),
+      ofType(EpisodeActions.getEpisodes),
       mergeMap(() =>
         this.apiService.getAllEpisodes().pipe(
-          map((data) => setEpisodes({ episodes: data.results })),
+          map((data) => EpisodeActions.setEpisodes({ episodes: data.results })),
           catchError(() => EMPTY)
         )
       )
@@ -28,11 +24,11 @@ export class ApiEffects {
 
   readonly setEpisode$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(getEpisode),
+      ofType(EpisodeActions.getEpisode),
       mergeMap(({ id }) =>
         this.apiService.getEpisode(id).pipe(
           map((data) => {
-            return setEpisode(data);
+            return EpisodeActions.setEpisode(data);
           }),
           catchError(() => EMPTY)
         )
@@ -42,17 +38,15 @@ export class ApiEffects {
 
   readonly setCharacter$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(getCharacters),
+      ofType(CharacterActions.getCharacters),
       mergeMap(({ url }) =>
         this.apiService.getCharacter(url).pipe(
           map((response: Character) => {
-            return setCharacters({ c: response });
+            return CharacterActions.addCharacters({ character: response });
           }),
           catchError(() => EMPTY)
         )
       )
     );
   });
-
-  constructor(private actions$: Actions, private apiService: ApiService) {}
 }

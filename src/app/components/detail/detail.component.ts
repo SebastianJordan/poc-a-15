@@ -1,15 +1,12 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LetModule } from '@ngrx/component';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Character, Episode } from 'src/app/interfaces';
-import {
-  clearCharacters,
-  getCharacters,
-  getEpisode,
-} from 'src/app/store/api.actions';
+import { CharacterActions, EpisodeActions } from 'src/app/store/api.actions';
+import { selectAllCharacters, selectEpisode } from 'src/app/store/api.selector';
 
 @Component({
   selector: 'app-detail',
@@ -19,21 +16,23 @@ import {
   standalone: true,
 })
 export class DetailComponent implements OnDestroy {
-  characters$: Observable<Array<Character>>;
-  episode$: Observable<Episode>;
+  private store = inject(Store);
+  private route = inject(ActivatedRoute);
+
+  readonly characters$ = this.store.select(selectAllCharacters);
+  readonly episode$ = this.store.select(selectEpisode);
   sub: Subscription;
-  constructor(
-    private readonly store: Store<any>,
-    private readonly route: ActivatedRoute
-  ) {
-    this.characters$ = this.store.select('characters');
-    this.episode$ = this.store.select('episode');
+  constructor() {
     this.store.dispatch(
-      getEpisode({ id: this.route.snapshot.paramMap.get('id') || '0' })
+      EpisodeActions.getEpisode({
+        id: this.route.snapshot.paramMap.get('id') || '0',
+      })
     );
-    this.store.dispatch(clearCharacters());
+    this.store.dispatch(CharacterActions.clearCharacters());
     this.sub = this.episode$.pipe().subscribe(({ characters }) => {
-      characters?.forEach((url) => this.store.dispatch(getCharacters({ url })));
+      characters?.forEach((url) =>
+        this.store.dispatch(CharacterActions.getCharacters({ url }))
+      );
     });
   }
 

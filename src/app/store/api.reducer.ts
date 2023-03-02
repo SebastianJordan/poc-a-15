@@ -1,34 +1,37 @@
-import { createReducer, on } from '@ngrx/store';
-import {
-  setEpisode,
-  setCharacters,
-  setEpisodes,
-  clearCharacters,
-  getEpisode,
-} from './api.actions';
-import { Character, Episode } from '../interfaces';
-
-let initStateAll: Array<Episode> = [];
-let initStateEpisode = {} as Episode;
+import { createFeature, createReducer, on } from '@ngrx/store';
+import { CharacterActions, EpisodeActions } from './api.actions';
+import { Character, Episode, IEpisode } from '../interfaces';
+let initStateEpisode: IEpisode = {
+  all: [],
+  selected: {} as Episode,
+};
 let initStateCharacters: Array<Character> = [];
 
-export const apiEpisodes = createReducer(
-  initStateAll,
-  on(setEpisodes, (state, { episodes }) => {
-    return [...episodes];
-  })
-);
+export const episodeFeature = createFeature({
+  name: 'episode',
+  reducer: createReducer(
+    initStateEpisode,
+    on(EpisodeActions.setEpisodes, (state, action) => {
+      return {
+        ...state,
+        all: action.episodes,
+      };
+    }),
+    on(EpisodeActions.getEpisode, () => initStateEpisode),
+    on(EpisodeActions.setEpisode, (state, action) => {
+      return { ...state, selected: action };
+    })
+  ),
+});
 
-export const apiEpisode = createReducer(
-  initStateEpisode,
-  on(getEpisode, () => initStateEpisode),
-  on(setEpisode, (state, episode) => episode)
-);
-
-export const apiCharacters = createReducer(
-  initStateCharacters,
-  on(clearCharacters, () => initStateCharacters),
-  on(setCharacters, (state, { c }) => {
-    return [...state, c];
-  })
-);
+export const characterFeature = createFeature({
+  name: 'character',
+  reducer: createReducer(
+    initStateCharacters,
+    on(CharacterActions.clearCharacters, () => initStateCharacters),
+    on(CharacterActions.addCharacters, (state, actions) => [
+      ...state,
+      actions.character,
+    ])
+  ),
+});
