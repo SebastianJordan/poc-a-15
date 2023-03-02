@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { Episode } from 'src/app/interfaces';
-import { EpisodeActions} from 'src/app/store/api.actions';
+import { EpisodeActions } from 'src/app/store/api.actions';
 import { DetailComponent } from '../detail/detail.component';
 import { RouterLinkWithHref } from '@angular/router';
 import { LetModule } from '@ngrx/component';
@@ -18,9 +16,7 @@ import { selectAllEpisodes } from 'src/app/store/api.selector';
 })
 export class ListComponent implements OnInit {
   private store = inject(Store);
-  readonly episodes$ =this.store.select(selectAllEpisodes);
-
-  constructor() {}
+  readonly episodes$ = this.store.select(selectAllEpisodes);
 
   ngOnInit(): void {
     this.store.dispatch(EpisodeActions.getEpisodes());

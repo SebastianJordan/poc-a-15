@@ -2,9 +2,8 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LetModule } from '@ngrx/component';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
-import { Character, Episode } from 'src/app/interfaces';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { CharacterActions, EpisodeActions } from 'src/app/store/api.actions';
 import { selectAllCharacters, selectEpisode } from 'src/app/store/api.selector';
 
